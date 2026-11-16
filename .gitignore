@@ -15,6 +15,8 @@ __pycache__/
 # 자동 실행 로그와 수집 원본은 양이 많고 다시 만들 수 있다. 회사 브랜치에서도 추적하지 않는다.
 records/_system/logs/
 records/_system/sources/
+# 리서치 수집 상태·문서별 메모·영상 작업 폴더. 파일이 수천 개이고 매주 바뀐다.
+records/research/state/
 
 # 녹음 원본(용량이 크다). 전사 텍스트만 둔다.
 *.webm
