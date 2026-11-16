@@ -82,9 +82,13 @@ Windows 없이 Linux 만 쓰는 환경이면 `scripts/run/work-auto.sh` 와 `scr
 - **pre-push** — 회사 브랜치가 허용하지 않은 remote 로 나가는 것, 기록이 섞인 `main` 이 나가는 것
 
 회사 브랜치에서 스킬을 고쳤으면 기록과 한 커밋에 섞지 않고, `main` 으로는 그 커밋만 골라 옮긴다.
+공유 폴더의 레포를 `main` 으로 바꾸지 않는다. 그동안 `records/` 가 디스크에서 사라져 자동 실행이 깨진다.
+`main` 은 공유 폴더 밖의 별도 작업 폴더(git worktree)에서 다룬다.
 
 ```bash
-git switch main && git cherry-pick <스킬 수정 커밋>
+git worktree add ~/.company-work-main main        # 한 번만
+git -C ~/.company-work-main cherry-pick <스킬 수정 커밋>
+git merge main                                     # 회사 브랜치로 다시 가져오기
 ```
 
 `main` 을 회사 브랜치로 가져오는 것(`git merge main`)은 괜찮다. 반대로 회사 브랜치를 `main` 에 머지하지 않는다. 기록이 전부 딸려 온다.
