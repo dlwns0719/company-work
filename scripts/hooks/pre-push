@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# 회사 기록이 허용하지 않은 저장소로 나가는 것을 막는다.
+# - main: 어디로든 push 할 수 있다. 단 records/ 내용이나 config/company.env 가 들어 있으면 거부한다.
+# - 그 밖의 브랜치·태그: `git config work.recordsRemote` 에 적힌 remote 로만 push 할 수 있다.
+remote="$1"
+allow="$(git config --get work.recordsRemote || true)"
+zero="0000000000000000000000000000000000000000"
+status=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue   # 원격 브랜치 삭제
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    leaked="$(git ls-tree -r --name-only "$local_sha" \
+      | grep -E '^(records/|config/company\.env$)' | grep -v -x 'records/README.md' || true)"
+    if [ -n "$leaked" ]; then
+      echo "push 거부: main 에 회사 기록·설정이 들어 있다." >&2
+      echo "$leaked" | head -5 | sed 's/^/  /' >&2
+      status=1
+    fi
+  elif [ "$remote" != "$allow" ]; then
+    echo "push 거부: $local_ref 는 회사 기록 브랜치다. '$remote' 로 보낼 수 없다." >&2
+    echo "회사가 허용한 저장소라면: git config work.recordsRemote $remote" >&2
+    status=1
+  fi
+done
+exit $status

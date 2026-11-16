@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# main 브랜치에는 공통 구조만 둔다. 회사 기록과 회사 설정이 섞여 들어오면 커밋을 막는다.
+branch="$(git symbolic-ref --short -q HEAD || true)"
+[ "$branch" = "main" ] || exit 0
+
+bad="$(git diff --cached --name-only --diff-filter=ACMR \
+  | grep -E '^(records/|config/company\.env$)' | grep -v -x 'records/README.md' || true)"
+if [ -n "$bad" ]; then
+  echo "커밋 거부: main 브랜치에 회사 기록·설정을 넣을 수 없다." >&2
+  echo "$bad" | sed 's/^/  /' >&2
+  echo "회사 브랜치에서 커밋한다. 스킬 수정만 main 으로 옮길 때는 그 커밋만 골라 옮긴다(cherry-pick)." >&2
+  exit 1
+fi

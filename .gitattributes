@@ -1,0 +1,5 @@
+# 줄바꿈을 LF 로 고정한다. Windows 에서 받아도 셸 스크립트·훅이 CRLF 로 바뀌지 않게 한다.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary
