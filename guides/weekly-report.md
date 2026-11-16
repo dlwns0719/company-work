@@ -18,7 +18,7 @@ description: 그 주의 일지·회의록·할 일 목록·트래커 대기열�
 | 할 일 목록 | `records/todo.md` |
 | 과제 폴더 | `records/projects/<slug>/README.md` (근거 문서 이름) |
 | 트래커 대기열 | `records/_system/queue/tracker-pending.md` |
-| 설정 | `config/company.env` (`MY_NAME`·`TEAM_NAME`·`WEEKLY_UPLOAD_DIR`) |
+| 설정 | `config/company.env` (`MY_NAME`·`TEAM_NAME`·`TRACKER_SKILL`·`WEEKLY_UPLOAD_DIR`·`WEEKLY_UPLOAD_NAME`) |
 
 산출물은 `records/weekly/YYYY/YYYY-Www.md` 다. 폴더 `YYYY` 는 주차 이름의 앞 네 자리(ISO 주차 연도)다. 연말·연초 주가 달력 연도와 달라도 파일 이름과 같은 폴더에 들어간다. 폴더가 없으면 만든다. 권장 시점은 설정의 `WEEKLY_REPORT_DOW` 요일 퇴근 전이다.
 
@@ -78,8 +78,8 @@ description: 그 주의 일지·회의록·할 일 목록·트래커 대기열�
 
 ### Step 5 — 트래커 반영
 
-지정분만 처리한다. 이 레포에는 트래커에 쓰는 도구가 기본으로 들어 있지 않다. 회사 브랜치에 그 회사 트래커용 스킬이 있으면
-그것을 쓰고, 없으면 붙여 넣을 수 있는 문안을 항목별로 출력한다. 상태 변경은 사용자가 **명시한 항목만** 한다.
+지정분만 처리한다. 설정 `TRACKER_SKILL` 에 트래커 스킬(예: `devops-log`)이 있으면 `guides/<TRACKER_SKILL>.md` 를 읽고 그 규칙대로
+반영한다. 없으면 붙여 넣을 수 있는 문안을 항목별로 출력한다. 상태 변경은 사용자가 **명시한 항목만** 한다.
 반영된 대기열 항목은 `## 반영 완료` 로 옮기고 `반영: YYYY-MM-DD` 를 붙인다.
 
 ### Step 6 — 할 일 목록 정리
@@ -90,8 +90,13 @@ description: 그 주의 일지·회의록·할 일 목록·트래커 대기열�
 
 ### Step 7 — 올리기와 보고
 
-`WEEKLY_UPLOAD_DIR` 가 설정돼 있으면 대상 경로와 올릴 내용을 보이고 **확인 후에만** 복사한다. 같은 파일이 있으면 덮어쓰지 않고
-차이를 보인다. 그 폴더의 다른 파일은 고치지 않는다.
+`WEEKLY_UPLOAD_DIR` 가 설정돼 있고 **이 PC 에서 그 폴더가 보일 때만** 올린다. 팀 폴더가 특정 PC 에서만 동기화되는 경우가 있다.
+보이지 않으면 `보류 (이 PC 에서 올릴 곳이 안 보임)` 로 적고 끝낸다.
+
+1. 올릴 곳 폴더에 `CLAUDE.md` 나 안내 문서가 있으면 먼저 읽어 위치·이름 규칙이 바뀌지 않았는지 확인한다.
+2. 파일 이름은 `WEEKLY_UPLOAD_NAME` 을 따른다. `{monday}` 는 그 주 월요일(`YYYY-MM-DD`), `{name}` 은 `MY_NAME`, `{week}` 는 주차다.
+3. 대상 경로와 올릴 내용을 보이고 **확인 후에만** 복사한다. 같은 파일이 있으면 덮어쓰지 않고 차이를 보인 뒤 다시 묻는다.
+4. 그 폴더의 다른 파일은 고치지 않는다. 동기화로 팀 전체에 바로 보인다.
 
 ```text
 주간보고: records/weekly/<연>/<WEEK>.md (항목 n개)
