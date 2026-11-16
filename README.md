@@ -13,8 +13,8 @@ company-work/
 ├── templates/               모든 양식
 ├── config/                  회사별 설정 (양식만 main)
 ├── scripts/
-│   ├── run/                 실행기: Claude 를 띄워 브리핑·일지를 쓴다 (Linux)
-│   ├── collect/windows/     수집기: Outlook·Teams·전사를 모은다 (Windows, AI 없음)
+│   ├── run/windows/         실행기: 수집을 마친 뒤 Claude 를 띄워 브리핑·일지를 쓴다 (Windows)
+│   ├── collect/windows/     수집기: Outlook·Teams·전사·녹음을 모은다 (AI 없음)
 │   └── hooks/               보호 훅
 └── records/                 업무 기록 (회사 브랜치에만)
 ```
@@ -30,39 +30,41 @@ company-work/
 
 ## 2. 두 PC 의 역할
 
-레포는 한 곳에만 둔다. 주로 쓰는 PC(Linux)에 두고, Windows 는 그 폴더를 네트워크 공유로 본다.
+레포는 한 곳에만 둔다. 주로 쓰는 PC(Linux)의 공유 폴더에 두고, Windows 는 그 폴더를 네트워크 경로로 본다.
 
 | PC | 하는 일 | 이유 |
 |---|---|---|
-| Linux (실행기) | Claude 를 띄워 브리핑·일지를 쓴다. 사람이 스킬을 쓰는 곳 | 주 작업 장소. 채팅 기록과 커밋이 여기 있다 |
-| Windows (수집기) | Outlook 일정·메일, Teams 채팅, 회의 전사를 `records/` 에 넣는다 | 이 자료는 Windows 에서만 읽을 수 있다 |
+| Windows | 자동 실행 전부. 자료를 모으고, 이어서 Claude 로 브리핑·일지를 써서 공유 폴더에 넣는다 | Outlook·Teams·회의 녹음은 Windows 에서만 읽을 수 있다. 모으는 곳에서 바로 써야 자료가 덜 모인 채로 써지지 않는다 |
+| Linux | 사람이 일하는 곳. 공유 폴더의 기록을 로컬 파일처럼 읽고, 스킬(`/day-start`·`/meeting-intake` 등)을 여기서 쓴다 | 주 작업 장소 |
 
-수집기는 AI 를 부르지 않는 고정 스크립트다. Windows 가 꺼져 있어도 실행기는 돌고, 그날 일정·메신저 칸만 `자료 없음` 으로 나온다.
+자동 실행 한 번은 이 순서로 돈다: Outlook·Teams·전사 수집 → Linux 채팅·커밋 추출(SSH) → Claude 실행 → 알림.
+Windows 가 꺼져 있으면 그날 브리핑·일지는 생기지 않고, 켜면 그때 한 번 돈다.
 git 은 Linux 에서만 쓴다. 네트워크 공유에서 git 을 돌리면 느리고 줄바꿈·권한이 바뀐 것으로 잡힌다.
 
 ## 3. 처음 설정
 
-### 3-1. 공통 (레포를 둔 PC)
+### 3-1. 레포를 둔 PC (Linux)
 
 ```bash
 bash scripts/setup.sh                  # 보호 훅 켜기
 git switch -c <회사이름>                # 회사 브랜치
 cp config/company.example.env config/company.env   # 값 채우기
 bash scripts/init-records.sh           # records/ 뼈대
-bash scripts/run/install-timers.sh     # 평일 아침·저녁 자동 실행 등록 (systemd 사용자 타이머)
 ```
 
-무인 실행은 로그인이 만료되면 조용히 멈춘다. 실행기 PC 에서 `claude setup-token` 으로 무인 실행용 로그인을 해 둔다.
+### 3-2. Windows (자동 실행)
 
-### 3-2. Windows 수집기
-
-1. 레포 폴더를 `\\서버\공유\...` 경로로 열 수 있게 자격 증명을 저장한다.
-2. 그 경로에서 등록한다. 드라이브 문자(Z:)가 아니라 `\\` 경로여야 작업 스케줄러가 찾는다.
+1. 탐색기에서 `\\서버\공유` 를 열고 자격 증명을 저장한다.
+2. Linux 채팅을 일지에 넣으려면 Windows 에서 Linux 로 비밀번호 없는 SSH 키 접속이 돼야 한다(`LINUX_HOST`·`LINUX_REPO`).
+3. 무인 실행은 로그인이 만료되면 조용히 멈춘다. Windows 에서 `claude setup-token` 으로 무인 실행용 로그인을 해 둔다.
+4. `\\` 경로에서 등록한다. 드라이브 문자(Z:)가 아니라 `\\` 경로여야 작업 스케줄러가 찾는다.
    ```powershell
-   powershell -ExecutionPolicy Bypass -File \\서버\공유\company-work\scripts\collect\windows\register-collect-tasks.ps1
+   powershell -ExecutionPolicy Bypass -File \\서버\공유\company-work\scripts\run\windows\register-tasks.ps1
    ```
-3. 회의 전사가 생기는 폴더를 `config/company.env` 의 `RECORDING_DIR` 에 적는다. 새 전사가 `records/inbox/transcripts/` 로 복사된다.
-4. `scripts/collect/windows/*.ps1` 은 UTF-8 BOM 으로 저장한다. Windows PowerShell 5.1 은 BOM 이 없으면 한글을 깨뜨린다.
+5. 회의 녹음·전사가 생기는 폴더를 `config/company.env` 의 `RECORDING_DIR` 에 적는다. 새 전사와 녹음이 `records/inbox/transcripts/` 로 복사된다.
+6. `*.ps1` 은 UTF-8 BOM 으로 저장한다. Windows PowerShell 5.1 은 BOM 이 없으면 한글을 깨뜨린다.
+
+Windows 없이 Linux 만 쓰는 환경이면 `scripts/run/work-auto.sh` 와 `scripts/run/install-timers.sh`(systemd 타이머)를 쓴다. 이때는 일정·메신저 수집이 없다.
 
 ## 4. 브랜치와 보호 장치
 
@@ -82,7 +84,7 @@ bash scripts/run/install-timers.sh     # 평일 아침·저녁 자동 실행 등
 git switch main && git cherry-pick <스킬 수정 커밋>
 ```
 
-머지(`git merge <회사이름>`)는 하지 않는다. 기록이 전부 딸려 온다.
+`main` 을 회사 브랜치로 가져오는 것(`git merge main`)은 괜찮다. 반대로 회사 브랜치를 `main` 에 머지하지 않는다. 기록이 전부 딸려 온다.
 
 ## 5. 지켜야 할 규칙
 
@@ -98,7 +100,8 @@ git switch main && git cherry-pick <스킬 수정 커밋>
 
 | 증상 | 볼 곳 |
 |---|---|
-| 브리핑·일지가 안 생겼다 | `/ops-check`, `records/_system/logs/YYYY-MM/<날짜>-<작업>.err.log` |
-| 일정·메신저 칸이 비었다 | `runs.tsv` 의 `collect-*` 줄. Windows PC 가 켜져 있고 로그인돼 있는지 |
-| 전사가 inbox 에 안 들어온다 | `RECORDING_DIR` 값, `work-collect-transcripts` 작업 |
-| 빠진 날을 다시 채우고 싶다 | `bash scripts/run/work-auto.sh daily-log YYYY-MM-DD` |
+| 브리핑·일지가 안 생겼다 | `/ops-check`, `records/_system/logs/YYYY-MM/<날짜>-<작업>.err.log`. Windows 가 켜져 있었는지 |
+| 일정·메신저 칸이 비었다 | `runs.tsv` 의 `collect-*` 줄. Outlook·Teams 가 열려 있었는지 |
+| 일지에 Linux 작업이 없다 | `runs.tsv` 의 `collect-linux-chat` 줄. SSH 키 접속이 되는지 |
+| 전사가 inbox 에 안 들어온다 | `RECORDING_DIR` 값, `work-transcripts` 작업 |
+| 빠진 날을 다시 채우고 싶다 | Windows 에서 `work-auto.ps1 daily-log YYYY-MM-DD` |

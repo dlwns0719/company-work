@@ -129,7 +129,7 @@ if ($py) {
     $d = if ($Mode -eq 'morning') { $Prev } else { $Day }
     $chatDir = Join-Path $Src 'chat'
     New-Item -ItemType Directory -Force -Path $chatDir | Out-Null
-    $target = Join-Path $chatDir "$d-$env:COMPUTERNAME.md"
+    $target = Join-Path $chatDir "$d-windows.md"
     & cmd /c "`"$py`" -I `"$Repo\scripts\chatlog_extract.py`" $d > `"$target`""
     if ($LASTEXITCODE -eq 0) { Add-Run 'collect-chat' 'ok' "$d" } else { Add-Run 'collect-chat' 'fail' "종료 코드 $LASTEXITCODE ($d)" }
 }

@@ -32,10 +32,10 @@ scope: project
 ### 하루 흐름
 
 ```text
-아침  수집(Windows) → /day-start --auto → 브리핑
+아침  Windows: 수집 → /day-start --auto → 브리핑
 낮    회의 → 전사가 inbox 로 들어옴 → /meeting-intake → 회의 폴더 · 회차 기록 · todo
       문서 작업 → /project-note add·index → 과제 폴더
-저녁  수집(Windows) → /daily-log --auto → 일지 · todo
+저녁  Windows: 수집 → /daily-log --auto → 일지 · todo
 주 1회 /weekly-report → 주간보고    필요할 때 /ops-check
 ```
 
@@ -47,8 +47,8 @@ scope: project
 | `.claude/commands/` | 슬래시 커맨드 진입 파일 | main |
 | `templates/` | 모든 양식. 스킬이 여기서 복사해 쓴다. 구조를 임의로 바꾸지 않는다 | main |
 | `config/` | `company.example.env` 양식(main), `company.env` 실제 값(회사 브랜치) | 양식만 main |
-| `scripts/run/` | 실행기 — Claude 를 띄워 브리핑·일지를 쓴다 (Linux, systemd 타이머) | main |
-| `scripts/collect/windows/` | 수집기 — Outlook·Teams·전사·채팅을 `records/` 에 넣는다. AI 를 부르지 않는다 (Windows 작업 스케줄러) | main |
+| `scripts/run/windows/` | 실행기 — 수집을 마친 뒤 Claude 를 띄워 브리핑·일지를 쓴다 (Windows 작업 스케줄러). `scripts/run/work-auto.sh` 는 Windows 없이 Linux 만 쓸 때의 대안 | main |
+| `scripts/collect/windows/` | 수집기 — Outlook·Teams·전사·녹음·채팅을 `records/` 에 넣는다. AI 를 부르지 않는다. 실행기가 부른다 | main |
 | `scripts/hooks/` | 보호 훅 — main 에 기록이 섞이거나 회사 브랜치가 밖으로 나가는 것을 막는다 | main |
 | `records/` | 실제 업무 기록. 구조는 `records/README.md` | **회사 브랜치만** |
 
@@ -72,5 +72,5 @@ guides/GUIDE_CORE.md  >  skill 가이드  >  에이전트 자체 판단
 
 ## Project Info
 
-- **Stack**: bash, PowerShell 5.1(수집기), Python 3.10+ 표준 라이브러리만
+- **Stack**: PowerShell 5.1(실행기·수집기), bash, Python 3.10+ 표준 라이브러리만
 - **Setup**: `bash scripts/setup.sh` → 회사 브랜치에서 `bash scripts/init-records.sh`

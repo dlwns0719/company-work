@@ -20,7 +20,7 @@ description: 자동 실행(수집·브리핑·일지)이 제대로 돌았는지 
 | 휴무일 | `records/_system/state/holidays.txt` |
 | 자세한 로그 | `records/_system/logs/YYYY-MM/<날짜>-<작업>.{log,err.log,prep.log}` (이상이 있는 날만 연다) |
 
-작업 이름: `day-start`·`daily-log` 는 실행기, `collect-outlook`·`collect-teams`·`collect-chat`·`collect-transcripts` 는 Windows 수집기다.
+작업 이름: `day-start`·`daily-log` 는 Claude 실행, `collect-outlook`·`collect-teams`·`collect-chat`·`collect-transcripts` 는 Windows 수집, `collect-linux-chat` 은 Linux 채팅 추출(SSH)이다.
 결과는 `ok`(성공) · `skip`(이미 있어 건너뜀) · `warn`(돌았지만 손볼 것 있음) · `fail`(실패) 넷이다.
 
 ## 입력
@@ -62,7 +62,7 @@ description: 자동 실행(수집·브리핑·일지)이 제대로 돌았는지 
 
 | 원인 | 보이는 것 | 고치는 방법 |
 |---|---|---|
-| 로그인 만료 | `err.log` 에 sign-in·auth login | 실행기 PC 에서 `claude auth login`. 무인 실행용은 `claude setup-token` |
+| 로그인 만료 | `err.log` 에 sign-in·auth login | 실행기 PC(Windows)에서 `claude auth login`. 무인 실행용은 `claude setup-token` |
 | 모델 이름 오류 | `err.log` 에 unrecognized_model | `config/company.env` 의 `CLAUDE_MODEL` 을 쓸 수 있는 이름으로 고정 |
 | 시간 초과 | `runs.tsv` 설명에 시간 초과 | `RUN_TIMEOUT_MIN` 을 늘리거나 재료 크기를 확인 |
 | 수집 자료 없음 | `runs.tsv` 에 수집 자료 없음 | Windows PC 가 켜져 있고 로그인돼 있는지, 수집 작업이 등록돼 있는지 |
@@ -83,7 +83,7 @@ description: 자동 실행(수집·브리핑·일지)이 제대로 돌았는지 
 이어서 Step 2 표, 원인별 정리, 지금 할 일을 번호로 적는다. 다시 채울 수 있는 것은 명령을 그대로 적는다.
 
 ```bash
-bash scripts/run/work-auto.sh daily-log YYYY-MM-DD   # 빠진 일지 (날짜를 주면 휴무 검사를 건너뛴다)
+powershell -ExecutionPolicy Bypass -File scripts/run/windows/work-auto.ps1 daily-log YYYY-MM-DD   # 빠진 일지 (Windows 에서. 날짜를 주면 휴무 검사를 건너뛴다)
 ```
 
 이어서 `guides/GUIDE_CORE.md` §5 Self-Check 를 출력한다.
