@@ -56,13 +56,16 @@ bash scripts/init-records.sh           # records/ 뼈대
 
 1. 탐색기에서 `\\서버\공유` 를 열고 자격 증명을 저장한다.
 2. Linux 채팅을 일지에 넣으려면 Windows 에서 Linux 로 비밀번호 없는 SSH 키 접속이 돼야 한다(`LINUX_HOST`·`LINUX_REPO`).
-3. 무인 실행은 로그인이 만료되면 조용히 멈춘다. Windows 에서 `claude setup-token` 으로 무인 실행용 로그인을 해 둔다.
-4. `\\` 경로에서 등록한다. 드라이브 문자(Z:)가 아니라 `\\` 경로여야 작업 스케줄러가 찾는다.
+3. 무인 실행은 로그인이 만료되면 조용히 멈춘다. Windows 에서 `claude setup-token` 으로 무인 실행용 토큰(1년)을 만들고,
+   `setx CLAUDE_CODE_OAUTH_TOKEN "<토큰>"` 으로 사용자 환경변수에 저장한다. 작업 스케줄러가 띄우는 Claude 가 이 값을 쓴다.
+4. `config/company.env` 에 `REPO_DRIVE`(예: `W:`)를 적는다. 실행기가 공유를 그 드라이브로 연결해 그 경로에서 Claude 를 띄운다.
+   `\\` 경로에서 바로 띄우면 파일 읽기가 거부된다.
+5. `\\` 경로에서 등록한다. 드라이브 문자(Z:)가 아니라 `\\` 경로여야 작업 스케줄러가 찾는다.
    ```powershell
    powershell -ExecutionPolicy Bypass -File \\서버\공유\company-work\scripts\run\windows\register-tasks.ps1
    ```
-5. 회의 녹음·전사가 생기는 폴더를 `config/company.env` 의 `RECORDING_DIR` 에 적는다. 새 전사와 녹음이 `records/inbox/transcripts/` 로 복사된다.
-6. `*.ps1` 은 UTF-8 BOM 으로 저장한다. Windows PowerShell 5.1 은 BOM 이 없으면 한글을 깨뜨린다.
+6. 회의 녹음·전사가 생기는 폴더를 `config/company.env` 의 `RECORDING_DIR` 에 적는다. 새 전사와 녹음이 `records/inbox/transcripts/` 로 복사된다.
+7. `*.ps1` 은 UTF-8 BOM 으로 저장한다. Windows PowerShell 5.1 은 BOM 이 없으면 한글을 깨뜨린다.
 
 Windows 없이 Linux 만 쓰는 환경이면 `scripts/run/work-auto.sh` 와 `scripts/run/install-timers.sh`(systemd 타이머)를 쓴다. 이때는 일정·메신저 수집이 없다.
 
