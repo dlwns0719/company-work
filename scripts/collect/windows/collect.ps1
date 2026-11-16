@@ -91,15 +91,23 @@ function Copy-Transcripts {
     $seen = @()
     if (Test-Path $seenFile) { $seen = [IO.File]::ReadAllLines($seenFile, $Utf8) }
     $cutoff = (Get-Date).AddDays(-7)
-    $n = 0
+    $n = 0; $a = 0
     Get-ChildItem -Path $dir -Filter '*.transcript.txt' -File |
         Where-Object { $_.LastWriteTime -ge $cutoff -and $_.Name -notin $seen -and $_.LastWriteTime -lt (Get-Date).AddMinutes(-1) } |
         ForEach-Object {
             Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $inbox $_.Name)
+            # 녹음 파일도 같이 보낸다(COPY_RECORDINGS=1). 전사와 이름이 같고 확장자만 다른 파일이다.
+            if ($Cfg['COPY_RECORDINGS'] -eq '1') {
+                $stem = $_.Name -replace '\.transcript\.txt$', ''
+                foreach ($ext in 'webm', 'm4a', 'mp3', 'wav') {
+                    $audio = Join-Path $dir "$stem.$ext"
+                    if (Test-Path -LiteralPath $audio) { Copy-Item -LiteralPath $audio -Destination (Join-Path $inbox "$stem.$ext"); $a++ }
+                }
+            }
             [IO.File]::AppendAllText($seenFile, $_.Name + "`n", $Utf8)
             $n++
         }
-    if ($n -gt 0) { Add-Run 'collect-transcripts' 'ok' "새 전사 ${n}건 -> records/inbox/transcripts/" }
+    if ($n -gt 0) { Add-Run 'collect-transcripts' 'ok' "새 전사 ${n}건, 녹음 ${a}건 -> records/inbox/transcripts/" }
 }
 
 try { Copy-Transcripts } catch { Add-Run 'collect-transcripts' 'fail' "$($_.Exception.Message)" }

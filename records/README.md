@@ -16,7 +16,7 @@ bash scripts/init-records.sh
 records/
 ├── todo.md                         할 일 목록 (단일 원본, T-NNN)
 ├── inbox/                          아직 처리하지 않은 입력이 들어오는 한 곳
-│   ├── transcripts/                회의 전사 (*.transcript.txt). 처리되면 회의 폴더로 옮겨진다
+│   ├── transcripts/                회의 전사(*.transcript.txt)와 녹음. 처리되면 회의 폴더로 옮겨진다
 │   └── notes/                      메모·받은 자료
 ├── daily/YYYY-MM/
 │   ├── YYYY-MM-DD-brief.md         출근 브리핑 (아침 자동)
@@ -24,7 +24,8 @@ records/
 ├── meetings/
 │   ├── YYYY-MM/YYYY-MM-DD-<slug>/
 │   │   ├── minutes.md              회의록
-│   │   └── transcript.txt          전사 원문
+│   │   ├── transcript.txt          전사 원문
+│   │   └── recording.webm          녹음 (git 추적 안 함)
 │   └── series/<slug>.md            여러 번 이어지는 회의의 회차·누적 결정·이월 미결
 ├── weekly/YYYY/YYYY-Www.md         주간보고
 ├── projects/<slug>/                과제별 산출물 (보고 자료·조사·그림). README.md 가 목차다
