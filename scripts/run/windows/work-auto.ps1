@@ -162,8 +162,8 @@ if (-not $proc.WaitForExit($TimeoutMin * 60 * 1000)) {
 $rc = $proc.ExitCode
 
 # 성공해도 손봐야 할 경고(로그인 만료 예고, 모델 이름 오류 등)는 따로 남긴다.
-$warn = Get-Content -Encoding UTF8 $ErrLog -ErrorAction SilentlyContinue |
-    Where-Object { $_ -match 'sign-in|auth login|unrecognized_model|rate.?limit|expired' } | Select-Object -First 1
+$warn = Get-Content -Encoding UTF8 $ErrLog, $Log -ErrorAction SilentlyContinue |
+    Where-Object { $_ -match 'sign-in|auth login|authenticate|unrecognized_model|rate.?limit|expired' } | Select-Object -First 1
 if ($warn) {
     if ($warn.Length -gt 160) { $warn = $warn.Substring(0, 160) }
     Add-Run $Skill 'warn' $warn
@@ -180,6 +180,9 @@ if ($rc -eq 0 -and (Test-Path $OutFile)) {
     exit 0
 }
 
-Add-Run $Skill 'fail' "종료 코드 $rc"
+# 실패 원인은 표준 출력 첫 줄에 나오는 경우가 많다(로그인 만료 등). 기록에 같이 남긴다.
+$why = (Get-Content -Encoding UTF8 $Log -ErrorAction SilentlyContinue | Where-Object { $_.Trim() } | Select-Object -First 1)
+if ($why -and $why.Length -gt 140) { $why = $why.Substring(0, 140) }
+Add-Run $Skill 'fail' "종료 코드 $rc. $why"
 Send-Notice "$Title 실패 ($Day)" "종료 코드 $rc. 로그: records/_system/logs/$Month/$Day-$Skill.log"
 exit 1
