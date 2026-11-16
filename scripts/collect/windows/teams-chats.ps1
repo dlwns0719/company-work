@@ -139,7 +139,7 @@ function Scroll-Up {
 # 5. 방마다 열고 읽기
 $now = Get-Date
 $Repo = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
-$OutDir = Join-Path $Repo 'worklog\_system\sources\teams'
+$OutDir = Join-Path $Repo 'records\_system\sources\teams'
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $OutFile = if ($Out) { if ([IO.Path]::IsPathRooted($Out)) { $Out } else { Join-Path $Repo $Out } } else { Join-Path $OutDir ($now.ToString('yyyy-MM-dd_HHmm') + '.md') }
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $OutFile) | Out-Null

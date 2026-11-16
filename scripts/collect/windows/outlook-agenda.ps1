@@ -24,7 +24,7 @@ if ($Date -notmatch '^\d{4}-\d{2}-\d{2}$') {
 }
 
 $Repo = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
-$OutDir = Join-Path $Repo 'worklog\_system\sources\outlook'
+$OutDir = Join-Path $Repo 'records\_system\sources\outlook'
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $OutFile = Join-Path $OutDir "$Date.md"
 
