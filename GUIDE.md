@@ -24,7 +24,7 @@ scope: project
 |---|---|---|
 | `/day-start [날짜]` | **출근 브리핑** — 할 일 목록·직전 근무일 일지·미처리 입력·일정·메신저·자동 실행 기록을 읽어 오늘 할 일 3~5개를 제안한다. 답한 것만 todo 에 반영. `--auto`: 평일 아침 실행기가 `records/daily/YYYY-MM/<날짜>-brief.md` 에 저장 | `guides/day-start.md` |
 | `/daily-log [날짜]` | **업무 일지** — 채팅·커밋 추출물과 그날 일정에서 후보를 뽑아 `records/daily/YYYY-MM/<날짜>-log.md` 에 고정 양식으로 기록. `--auto`: 평일 저녁 실행기가 후보 전부를 쓰고 todo 를 갱신(머리말 `auto:`·`reviewed: false`). 사람이 치면 검토 모드 | `guides/daily-log.md` |
-| `/meeting-intake [전사] [회의명]` | **회의 전사 처리** — `records/inbox/transcripts/` 의 전사를 읽어 화자 대응·오류 보정 후 회의 폴더(`minutes.md` + `transcript.txt`)를 만든다. 이어지는 회의면 `meetings/series/` 의 회차 기록(누적 결정·이월 미결)을 갱신. 할 일 변경안·트래커 등록안은 확인 후 반영 | `guides/meeting-intake.md` |
+| `/meeting-intake [전사] [회의명]` | **회의 전사 처리** — `records/inbox/` 아래(하위 폴더 포함)의 전사를 읽어 화자 대응·오류 보정 후 회의 폴더(`minutes.md` + `transcript.txt`)를 만든다. 이어지는 회의면 `meetings/series/` 의 회차 기록(누적 결정·이월 미결)을 갱신. 할 일 변경안·트래커 등록안은 확인 후 반영 | `guides/meeting-intake.md` |
 | `/weekly-report [기간]` | **주간보고** — 그 주 일지·회의록·todo·대기열을 할 일 ID 로 묶어 `records/weekly/YYYY/YYYY-Www.md` 를 만든다. 지난 주 보고가 빠졌는지 먼저 확인. 트래커 반영·올리기는 확인 후 | `guides/weekly-report.md` |
 | `/project-note <모드> [slug]` | **과제 폴더 정리** — 과제별 산출물을 `records/projects/<slug>/` 에 모으고 목차를 유지한다. `new`·`add`·`index`·`sweep`. 파일 이동은 확인 후 | `guides/project-note.md` |
 | `/ops-check [기간]` | **자동 실행 점검** — `runs.tsv` 와 결과 파일을 대조해 빠진 날·실패·반복 경고를 찾고 고칠 방법을 제안한다. 읽기 전용 | `guides/ops-check.md` |

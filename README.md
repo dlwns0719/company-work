@@ -64,7 +64,8 @@ bash scripts/init-records.sh           # records/ 뼈대
    ```powershell
    powershell -ExecutionPolicy Bypass -File \\서버\공유\company-work\scripts\run\windows\register-tasks.ps1
    ```
-6. 회의 녹음·전사가 생기는 폴더를 `config/company.env` 의 `RECORDING_DIR` 에 적는다. 새 전사와 녹음이 `records/inbox/transcripts/` 로 복사된다.
+6. 회의 녹음 프로그램의 저장 위치를 공유 폴더의 `records\inbox\` 아래로 바꾼다(하위 폴더 이름은 자유). 녹음이 끝나면 바로 Linux 에서 보인다.
+   저장 위치를 바꿀 수 없으면 그 폴더를 `RECORDING_DIR` 에 적는다. 수집기가 10분마다 새 전사와 녹음을 `records/inbox/transcripts/` 로 복사한다.
 7. `*.ps1` 은 UTF-8 BOM 으로 저장한다. Windows PowerShell 5.1 은 BOM 이 없으면 한글을 깨뜨린다.
 
 Windows 없이 Linux 만 쓰는 환경이면 `scripts/run/work-auto.sh` 와 `scripts/run/install-timers.sh`(systemd 타이머)를 쓴다. 이때는 일정·메신저 수집이 없다.

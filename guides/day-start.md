@@ -16,7 +16,7 @@ description: 출근 직후 할 일 목록·직전 근무일 일지·미처리 �
 | 할 일 목록 | `records/todo.md` |
 | 직전 근무일 일지 | `records/daily/YYYY-MM/<직전 근무일>-log.md` |
 | 직전 근무일 채팅·커밋 추출물 | `records/_system/sources/chat/<직전 근무일>-windows.md`, `-linux.md` (PC 마다 한 파일) |
-| 처리 안 된 입력 | `records/inbox/transcripts/`, `records/inbox/notes/` |
+| 처리 안 된 입력 | `records/inbox/` 아래(하위 폴더 포함)의 `*.transcript.txt` (녹음 프로그램이 바로 저장하는 폴더 포함), `records/inbox/notes/` |
 | 오늘 일정·읽지 않은 메일 | `records/_system/sources/outlook/<날짜>.md` |
 | 직전 근무일 이후 메신저 | `records/_system/sources/teams/<날짜>-brief.md` |
 | 정기 회의 | `records/_system/state/meetings.md` |
@@ -68,8 +68,9 @@ todo 를 읽어 이 순서로 분류한다: 기한 지남 → 오늘 기한 → 
 
 ### Step 5 — 밀린 입력
 
-1. `records/inbox/transcripts/` 의 전사 파일은 모두 미처리다(처리되면 회의 폴더로 옮겨진다). `/meeting-intake` 대상으로 나열한다.
-2. `records/inbox/notes/` 에 파일이 있으면 건수와 이름만 적는다.
+1. `records/inbox/` 아래(하위 폴더 포함)의 `*.transcript.txt` 는 모두 미처리다(처리되면 회의 폴더로 옮겨진다). `/meeting-intake` 대상으로 나열한다.
+   크기가 0 인 전사는 전사가 실패했거나 아직 진행 중이다. `전사 비어 있음` 으로 따로 적는다.
+2. 그 밖에 `records/inbox/notes/` 에 파일이 있으면 건수와 이름만 적는다.
 3. 대기열 `## 대기` 항목 수를 센다. 주간보고 요일이 아니면 수만 적는다.
 4. 읽지 않은 메일 중 할 일 목록의 과제·사람과 관련된 것만 `참고` 에 1줄씩 적는다. 나머지는 건수만.
 5. `TRACKER_GET_CMD` 가 설정돼 있으면 todo 에서 `트래커: #번호` 가 있는 진행중·할 일·대기 항목의 상태를 조회한다.

@@ -69,4 +69,10 @@ Register-Work 'work-dailylog' $Runner 'daily-log' `
 $tr = New-ScheduledTaskTrigger -Weekly -WeeksInterval 1 -DaysOfWeek $Weekdays -At '09:00'
 $tr.Repetition = (New-ScheduledTaskTrigger -Once -At '09:00' -RepetitionInterval (New-TimeSpan -Minutes $every) `
     -RepetitionDuration (New-TimeSpan -Hours 10)).Repetition
-Register-Work 'work-transcripts' $Collector 'transcripts' $tr 10 "평일 09:00 부터 ${every}분마다 새 회의 전사·녹음 복사"
+if ($Cfg['RECORDING_DIR']) {
+    Register-Work 'work-transcripts' $Collector 'transcripts' $tr 10 "평일 09:00 부터 ${every}분마다 새 회의 전사·녹음 복사"
+} else {
+    # 녹음 프로그램이 records/inbox/ 에 바로 저장하면 복사가 필요 없다.
+    Unregister-ScheduledTask -TaskName 'work-transcripts' -TaskPath $Folder -Confirm:$false -ErrorAction SilentlyContinue
+    '건너뜀: work-transcripts (RECORDING_DIR 비어 있음)'
+}
