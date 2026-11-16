@@ -20,7 +20,7 @@ description: 그 주의 일지·회의록·할 일 목록·트래커 대기열�
 | 트래커 대기열 | `records/_system/queue/tracker-pending.md` |
 | 설정 | `config/company.env` (`MY_NAME`·`TEAM_NAME`·`WEEKLY_UPLOAD_DIR`) |
 
-산출물은 `records/weekly/YYYY/YYYY-Www.md` 다. 권장 시점은 설정의 `WEEKLY_REPORT_DOW` 요일 퇴근 전이다.
+산출물은 `records/weekly/YYYY/YYYY-Www.md` 다. 폴더 `YYYY` 는 주차 이름의 앞 네 자리(ISO 주차 연도)다. 연말·연초 주가 달력 연도와 달라도 파일 이름과 같은 폴더에 들어간다. 폴더가 없으면 만든다. 권장 시점은 설정의 `WEEKLY_REPORT_DOW` 요일 퇴근 전이다.
 
 ## 입력
 
